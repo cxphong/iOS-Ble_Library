@@ -11,6 +11,7 @@ import CoreBluetooth
 
 class ViewController: UITableViewController {
     var s : FioTScanManager!
+    var f : FioTManager!
     var listDevices : NSMutableArray!
     
     
@@ -57,6 +58,32 @@ class ViewController: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.s.stopScan()
+        let d = self.listDevices.object(at: indexPath.row) as! FioTBluetoothDevice
+        
+        let c1 = FioTBluetoothCharacteristic(assignedUUID: "0000F236-B38D-4985-720E-0F993A68EE41", notify: false)
+        let c2 = FioTBluetoothCharacteristic(assignedUUID: "0000F238-B38D-4985-720E-0F993A68EE41", notify: true)
+        let c = NSMutableArray()
+        c.add(c1)
+        c.add(c2)
+        
+        let s = FioTBluetoothService(assignedUUID: "0000F234-B38D-4985-720E-0F993A68EE41", characteristics: c)
+        d.services.add(s)
+        
+        f = FioTManager(device: d)
+        f.delegate  = self
+        
+        do {
+            try f.connect()
+        } catch FioTManagerException.ConnectIncorrectState(let currentState) {
+            print ("Exception ConnectIncorrectState, current state = \(currentState.rawValue)")
+        } catch {
+            
+        }
+        
+    }
+    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension + 50
     }
@@ -71,6 +98,31 @@ extension ViewController: FioTScanManagerProtocol {
     
     func didPowerOffBluetooth() {
         print ("power off bl")
+    }
+}
+
+extension ViewController : FioTManagerDelegate {
+    func didConnect() {
+        print ("connected")
+        
+        do {
+            try self.f.writeSmall(data: Data.UInt32ToData(100, byteOder: .LittleEndian),
+                characteristicUUID: "0000F236-B38D-4985-720E-0F993A68EE41", writeType: CBCharacteristicWriteType.withResponse)
+        } catch {
+            
+        }
+    }
+    
+    func didFailConnect() {
+        
+    }
+    
+    func didDisconnect() {
+        print ("disconnect")
+    }
+    
+    func didReceiveNewData(_ characteristic: CBCharacteristic) {
+        print (String(format: "Receive = %@", (characteristic.value?.toHexString())!))
     }
 }
 

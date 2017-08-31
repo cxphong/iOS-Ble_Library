@@ -12,21 +12,33 @@ import CoreBluetooth
 enum FioTManagerException : Error {
     case CharacteristicNotExist
     case UsingIncorrectFunction
+    case ConnectIncorrectState(currentState : CBPeripheralState)
+}
+
+public protocol FioTManagerDelegate : class {
+    func didConnect()
+    func didFailConnect()
+    func didDisconnect()
+    func didReceiveNewData(_ characteristic : CBCharacteristic)
 }
 
 class FioTManager: NSObject {
     var ble : FioTBluetoothLE!
     var device : FioTBluetoothDevice!
+    var delegate : FioTManagerDelegate!
     
     init(device : FioTBluetoothDevice) {
         self.device = device
         self.ble = FioTBluetoothLE.shareInstance()
     }
     
-    func connect() {
-        self.ble.delegates.add(self)
-        self.device.peripheral.delegate = self
-        self.ble.connect(self.device.peripheral)
+    func connect() throws {
+        if (self.device.peripheral.state == .disconnected) {
+            self.ble.delegates.add(self)
+            self.ble.connect(self.device.peripheral)
+        } else {
+            throw FioTManagerException.ConnectIncorrectState(currentState: self.device.peripheral.state)
+        }
     }
     
     func write(data: Data, characteristic: CBCharacteristic, writeType: CBCharacteristicWriteType) {
@@ -98,6 +110,8 @@ extension FioTManager : FioTBluetoothLEDelegate {
     func didConnected(peripheral: CBPeripheral) {
         if (peripheral == device.peripheral) {
             print ("Connected")
+            peripheral.delegate = self
+            peripheral.discoverServices(nil)
         }
     }
     
@@ -117,23 +131,121 @@ extension FioTManager : FioTBluetoothLEDelegate {
 
 extension FioTManager : CBPeripheralDelegate {
     
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        
+        if (peripheral == self.device.peripheral) {
+            for s in peripheral.services! {
+                print("service = \(s.uuid.uuidString)")
+                
+                for ss in self.device.services {
+                    if (ss as! FioTBluetoothService).assignedUUID == s.uuid.uuidString {
+                       (ss as! FioTBluetoothService).service = s
+                        peripheral.discoverCharacteristics(nil, for: s)
+                    }
+                }
+            }
+        }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         
     }
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    private func completeFinishDiscoverCharacteristic() -> Bool {
+        for ss in self.device.services {
+            for cc in (ss as! FioTBluetoothService).characteristics {
+                if (cc as! FioTBluetoothCharacteristic).characteristic == nil {
+                    return false
+                }
+            }
+        }
         
+        return true
+    }
+    
+    private func hasNotifyCharacteristic() -> Bool {
+        for ss in self.device.services {
+            for cc in (ss as! FioTBluetoothService).characteristics {
+                if (cc as! FioTBluetoothCharacteristic).notify {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    private func completeSetup() -> Bool {
+        for ss in self.device.services {
+            for cc in (ss as! FioTBluetoothService).characteristics {
+                if !(cc as! FioTBluetoothCharacteristic).completeSetup {
+                    return false
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+        for c in service.characteristics! {
+            for ss in self.device.services {
+                if (ss as! FioTBluetoothService).assignedUUID == service.uuid.uuidString {
+                    for cc in (ss as! FioTBluetoothService).characteristics {
+                        if (cc as! FioTBluetoothCharacteristic).assignedUUID == c.uuid.uuidString {
+                           (cc as! FioTBluetoothCharacteristic).characteristic = c
+                            print ("characteristic \(c.uuid.uuidString)")
+                            
+                            if (cc as! FioTBluetoothCharacteristic).notify &&
+                                c.properties.contains(CBCharacteristicProperties.notify) {
+                                peripheral.setNotifyValue(true, for: c)
+                            } else {
+                               (cc as! FioTBluetoothCharacteristic).completeSetup = true
+                                
+                                if completeSetup() {
+                                    if self.delegate != nil {
+                                        self.delegate.didConnect()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
+       
+    }
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
+        print ("didUpdateNotificationStateFor error = \(String(describing: error))")
         
+        if (error != nil) {
+            self.delegate.didFailConnect()
+        } else {
+            for ss in self.device.services {
+                for cc in (ss as! FioTBluetoothService).characteristics {
+                    if (cc as! FioTBluetoothCharacteristic).assignedUUID == characteristic.uuid.uuidString {
+                       (cc as! FioTBluetoothCharacteristic).completeSetup = true
+                        
+                        if completeSetup() {
+                            if self.delegate != nil {
+                                self.delegate.didConnect()
+                            }
+                        }
+                    }
+                }
+            }
+            
+
+        }
     }
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        
+        if self.delegate != nil {
+            self.delegate.didReceiveNewData(characteristic)
+        }
     }
 }

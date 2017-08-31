@@ -11,6 +11,11 @@ import CoreBluetooth
 
 class FioTBluetoothService: NSObject {
     var service : CBService!
-    var assignUUID : String!
+    var assignedUUID : String!
     var characteristics : NSMutableArray!
+    
+    init(assignedUUID : String, characteristics : NSMutableArray) {
+        self.assignedUUID = assignedUUID
+        self.characteristics = characteristics
+    }
 }

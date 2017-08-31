@@ -10,17 +10,10 @@ import UIKit
 import CoreBluetooth
 
 public class FioTBluetoothDevice: NSObject {
-    enum State {
-        case Connecting
-        case Connected
-        case Disconnected
-    }
-    
     var peripheral : CBPeripheral!
     var rssi : NSNumber!
     var advertisementData: [String : Any]!
     var services : NSMutableArray!
-    var state : State = .Disconnected
     
     init (peripheral : CBPeripheral,
           rssi : NSNumber,
@@ -28,5 +21,6 @@ public class FioTBluetoothDevice: NSObject {
         self.peripheral = peripheral
         self.rssi = rssi
         self.advertisementData = advertisementData
+        self.services = NSMutableArray()
     }
 }
