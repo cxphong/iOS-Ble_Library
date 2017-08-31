@@ -19,6 +19,7 @@
 		3A628E741F56C98900587600 /* FioTManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A628E731F56C98900587600 /* FioTManager.swift */; };
 		3A628E761F56CA1700587600 /* FioTBluetoothService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A628E751F56CA1700587600 /* FioTBluetoothService.swift */; };
 		3A628E781F56CA7700587600 /* FioTBluetoothCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A628E771F56CA7700587600 /* FioTBluetoothCharacteristic.swift */; };
+		3A628E7A1F57B06300587600 /* FioTBluetoothDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A628E791F57B06300587600 /* FioTBluetoothDevice.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		3A628E731F56C98900587600 /* FioTManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FioTManager.swift; sourceTree = "<group>"; };
 		3A628E751F56CA1700587600 /* FioTBluetoothService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FioTBluetoothService.swift; sourceTree = "<group>"; };
 		3A628E771F56CA7700587600 /* FioTBluetoothCharacteristic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FioTBluetoothCharacteristic.swift; sourceTree = "<group>"; };
+		3A628E791F57B06300587600 /* FioTBluetoothDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FioTBluetoothDevice.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 				3A628E731F56C98900587600 /* FioTManager.swift */,
 				3A628E751F56CA1700587600 /* FioTBluetoothService.swift */,
 				3A628E771F56CA7700587600 /* FioTBluetoothCharacteristic.swift */,
+				3A628E791F57B06300587600 /* FioTBluetoothDevice.swift */,
 			);
 			path = ble;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				3A628E421F56C3A300587600 /* ViewController.swift in Sources */,
 				3A628E401F56C3A300587600 /* AppDelegate.swift in Sources */,
 				3A628E721F56C95200587600 /* FioTScanManager.swift in Sources */,
+				3A628E7A1F57B06300587600 /* FioTBluetoothDevice.swift in Sources */,
 				3A628E701F56C43000587600 /* FioTBluetoothLE.swift in Sources */,
 				3A628E761F56CA1700587600 /* FioTBluetoothService.swift in Sources */,
 				3A628E741F56C98900587600 /* FioTManager.swift in Sources */,
@@ -544,6 +548,7 @@
 				3A628E661F56C3A300587600 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3A628E671F56C3A300587600 /* Build configuration list for PBXNativeTarget "iOS-BLE-LibraryTests" */ = {
 			isa = XCConfigurationList;
@@ -552,6 +557,7 @@
 				3A628E691F56C3A300587600 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3A628E6A1F56C3A300587600 /* Build configuration list for PBXNativeTarget "iOS-BLE-LibraryUITests" */ = {
 			isa = XCConfigurationList;
@@ -560,6 +566,7 @@
 				3A628E6C1F56C3A300587600 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

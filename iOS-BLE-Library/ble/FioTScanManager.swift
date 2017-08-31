@@ -12,7 +12,7 @@ import CoreBluetooth
 
 public protocol FioTScanManagerProtocol : class {
     func didPowerOffBluetooth()
-    func didFoundPeripheral(peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber);
+    func didFoundDevice(device : FioTBluetoothDevice)
 }
 
 class FioTScanManager: NSObject {
@@ -33,8 +33,16 @@ class FioTScanManager: NSObject {
     var scanMode : ScanMode = .Continous
     var ble : FioTBluetoothLE!
     var delegate : FioTScanManagerProtocol!
+    var ignoreExist : Bool = true
+    var foundDevices : NSMutableArray!
+    var filterName : String?
     
-    func startScan(scanMode : ScanMode) {
+    override init() {
+        foundDevices = NSMutableArray()
+    }
+    
+    func startScan(filterName: String?, scanMode : ScanMode) {
+        self.filterName = filterName
         ble = FioTBluetoothLE.shareInstance()
         ble.stateProtocol = self
         ble.scanProtocol = self
@@ -58,11 +66,35 @@ extension FioTScanManager : FioTBluetoothLEStateProtocol, FioTBluetoothLEScanPro
         }
     }
     
+    func exist(peripheral : CBPeripheral) -> Bool {
+        for p in self.foundDevices {
+            print ("uuid = \((p as! CBPeripheral).identifier.uuidString)")
+            if (p as! CBPeripheral).identifier.uuidString == peripheral.identifier.uuidString {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
     func didFoundPeripheral(peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        if (self.delegate != nil) {
-            self.delegate.didFoundPeripheral(peripheral: peripheral,
-                                    advertisementData: advertisementData,
-                                    rssi: RSSI)
+        if (peripheral.name == nil) {
+            return
+        }
+        
+        if self.filterName == nil || (peripheral.name?.contains(self.filterName!))! {
+            if (!exist(peripheral: peripheral)) {
+                self.foundDevices.add(peripheral)
+            } else if (self.ignoreExist) {
+                print("exist")
+                return;
+            }
+            
+            if (self.delegate != nil) {
+                self.delegate.didFoundDevice(device: FioTBluetoothDevice(peripheral: peripheral,
+                                                                         rssi: RSSI,
+                                                                         advertisementData: advertisementData))
+            }
         }
     }
     

@@ -9,12 +9,6 @@
 import UIKit
 import CoreBluetooth
 
-//enum BluetoothError : Error {
-//    case Resetting
-//    case Unsupported
-//    case Unauthorized
-//}
-
 public protocol FioTBluetoothLEStateProtocol : class {
     func didUpdateState(_ state : CBManagerState)
 }
@@ -23,15 +17,23 @@ public protocol FioTBluetoothLEScanProtocol : class {
     func didFoundPeripheral(peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber);
 }
 
+public protocol FioTBluetoothLEDelegate : class {
+    func didConnected(peripheral : CBPeripheral)
+    func didDisconnected(peripheral : CBPeripheral)
+    func didFailToConnect(peripheral: CBPeripheral, error: Error?)
+}
+
 class FioTBluetoothLE: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
     static var instance : FioTBluetoothLE!
     var central : CBCentralManager!
     var scanProtocol : FioTBluetoothLEScanProtocol!
     var stateProtocol : FioTBluetoothLEStateProtocol!
+    var delegates : NSMutableArray!
     
     class func shareInstance() -> FioTBluetoothLE {
         if instance == nil {
             instance = FioTBluetoothLE()
+            instance.delegates = NSMutableArray()
             instance.central = CBCentralManager(delegate: instance, queue: nil)
         }
         
@@ -64,7 +66,9 @@ class FioTBluetoothLE: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     }
     
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        
+        for d in self.delegates {
+            (d as! FioTBluetoothLEDelegate).didConnected(peripheral: peripheral)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
@@ -72,11 +76,15 @@ class FioTBluetoothLE: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
     }
     
     func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        
+        for d in self.delegates {
+            (d as! FioTBluetoothLEDelegate).didFailToConnect(peripheral: peripheral, error: error)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        
+        for d in self.delegates {
+            (d as! FioTBluetoothLEDelegate).didDisconnected(peripheral: peripheral)
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
@@ -85,27 +93,5 @@ class FioTBluetoothLE: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate 
             self.scanProtocol.didFoundPeripheral(peripheral: peripheral, advertisementData: advertisementData, rssi: RSSI)
         }
     }
-    
-    // MARK: CBPeripheral delegate
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didWriteValueFor characteristic: CBCharacteristic, error: Error?) {
-        
-    }
-    
-    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        
-    }
-    
     
 }
