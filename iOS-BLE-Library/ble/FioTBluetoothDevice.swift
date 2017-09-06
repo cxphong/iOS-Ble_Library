@@ -14,6 +14,7 @@ public class FioTBluetoothDevice: NSObject {
     var rssi : NSNumber!
     var advertisementData: [String : Any]!
     var services : NSMutableArray!
+    var manager : FioTManager!
     
     init (peripheral : CBPeripheral,
           rssi : NSNumber,

@@ -102,7 +102,7 @@ extension ViewController: FioTScanManagerProtocol {
 }
 
 extension ViewController : FioTManagerDelegate {
-    func didConnect() {
+    func didConnect(_ device: FioTBluetoothDevice) {
         print ("connected")
         
         do {
@@ -113,15 +113,15 @@ extension ViewController : FioTManagerDelegate {
         }
     }
     
-    func didFailConnect() {
+    func didFailConnect(_ device: FioTBluetoothDevice) {
         
     }
     
-    func didDisconnect() {
+    func didDisconnect(_ device: FioTBluetoothDevice) {
         print ("disconnect")
     }
     
-    func didReceiveNewData(_ characteristic: CBCharacteristic) {
+    func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic: CBCharacteristic) {
         print (String(format: "Receive = %@", (characteristic.value?.toHexString())!))
     }
 }

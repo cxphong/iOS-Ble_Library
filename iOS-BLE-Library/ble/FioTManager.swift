@@ -16,10 +16,10 @@ enum FioTManagerException : Error {
 }
 
 public protocol FioTManagerDelegate : class {
-    func didConnect()
-    func didFailConnect()
-    func didDisconnect()
-    func didReceiveNewData(_ characteristic : CBCharacteristic)
+    func didConnect(_ device: FioTBluetoothDevice)
+    func didFailConnect(_ device: FioTBluetoothDevice)
+    func didDisconnect(_ device: FioTBluetoothDevice)
+    func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic : CBCharacteristic)
 }
 
 class FioTManager: NSObject {
@@ -118,12 +118,15 @@ extension FioTManager : FioTBluetoothLEDelegate {
     func didDisconnected(peripheral: CBPeripheral) {
         if (peripheral == device.peripheral) {
             print ("Disconnected")
+            self.delegate.didDisconnect(self.device)
+            self.ble.delegates.remove(self)
         }
     }
     
     func didFailToConnect(peripheral: CBPeripheral, error: Error?) {
         if (peripheral == device.peripheral) {
             print ("Fail to connecte \(String(describing: error))")
+            self.delegate.didFailConnect(self.device)
         }
     }
     
@@ -204,7 +207,7 @@ extension FioTManager : CBPeripheralDelegate {
                                 
                                 if completeSetup() {
                                     if self.delegate != nil {
-                                        self.delegate.didConnect()
+                                        self.delegate.didConnect(self.device)
                                     }
                                 }
                             }
@@ -223,7 +226,7 @@ extension FioTManager : CBPeripheralDelegate {
         print ("didUpdateNotificationStateFor error = \(String(describing: error))")
         
         if (error != nil) {
-            self.delegate.didFailConnect()
+            self.delegate.didFailConnect(self.device)
         } else {
             for ss in self.device.services {
                 for cc in (ss as! FioTBluetoothService).characteristics {
@@ -232,7 +235,7 @@ extension FioTManager : CBPeripheralDelegate {
                         
                         if completeSetup() {
                             if self.delegate != nil {
-                                self.delegate.didConnect()
+                                self.delegate.didConnect(self.device)
                             }
                         }
                     }
@@ -245,7 +248,7 @@ extension FioTManager : CBPeripheralDelegate {
     
     func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         if self.delegate != nil {
-            self.delegate.didReceiveNewData(characteristic)
+            self.delegate.didReceiveNewData(self.device, characteristic)
         }
     }
 }
