@@ -13,15 +13,32 @@ class ViewController: UITableViewController {
     var s : FioTScanManager!
     var f : FioTManager!
     var listDevices : NSMutableArray!
+    var data : Data!
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
         listDevices = NSMutableArray()
         s = FioTScanManager()
-        self.perform(#selector(startScan), with: nil, afterDelay: 5 )
+        self.perform(#selector(startScan), with: nil, afterDelay: 2 )
+        
+        let dirs = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true) as? [String]
+        
+//        let file = "std1.0.0.bin"
+//        if let directories = dirs {
+//            let dir = directories[0]; //documents directory
+//            
+//            let url = URL(fileURLWithPath: dir.appending("/" + file))
+//            do {
+//                self.data = try Data(contentsOf: url)
+//            print("data ", self.data.count)
+//            } catch {
+//                
+//            }
+//        }
+        
+        data = Data.stringToData("123456789123456789123")
         
     }
 
@@ -62,13 +79,13 @@ class ViewController: UITableViewController {
         self.s.stopScan()
         let d = self.listDevices.object(at: indexPath.row) as! FioTBluetoothDevice
         
-        let c1 = FioTBluetoothCharacteristic(assignedUUID: "0000F236-B38D-4985-720E-0F993A68EE41", notify: false)
-        let c2 = FioTBluetoothCharacteristic(assignedUUID: "0000F238-B38D-4985-720E-0F993A68EE41", notify: true)
+        let c1 = FioTBluetoothCharacteristic(assignedUUID: "FF01", notify: false)
+        //let c2 = FioTBluetoothCharacteristic(assignedUUID: "0000F238-B38D-4985-720E-0F993A68EE41", notify: true)
         let c = NSMutableArray()
         c.add(c1)
-        c.add(c2)
+//        c.add(c2)
         
-        let s = FioTBluetoothService(assignedUUID: "0000F234-B38D-4985-720E-0F993A68EE41", characteristics: c)
+        let s = FioTBluetoothService(assignedUUID: "00FF", characteristics: c)
         d.services.add(s)
         
         f = FioTManager(device: d)
@@ -106,11 +123,12 @@ extension ViewController : FioTManagerDelegate {
         print ("connected")
         
         do {
-            try self.f.writeSmall(data: Data.UInt32ToData(100, byteOder: .LittleEndian),
-                characteristicUUID: "0000F236-B38D-4985-720E-0F993A68EE41", writeType: CBCharacteristicWriteType.withResponse)
-        } catch {
-            
-        }
+        try self.f.writeLarge(data: self.data,
+                                      characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
+            } catch {
+                
+            }
+//        }
     }
     
     func didFailConnect(_ device: FioTBluetoothDevice) {

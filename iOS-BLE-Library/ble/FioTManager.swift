@@ -71,6 +71,27 @@ class FioTManager: NSObject {
         }
     }
     
+    func writeLarge(data: Data, characteristicUUID: String, writeType: CBCharacteristicWriteType) {
+        let queue = DispatchQueue(label: "write")
+        queue.async {
+            var numBytesSent = 0
+            
+            while (numBytesSent < data.count) {
+                let d = data.sub(in: numBytesSent...numBytesSent + 19)
+                do {
+                    try self.write(data: d!, characteristicUUID: characteristicUUID, writeType: writeType)
+                } catch  {
+                   
+                }
+                
+                numBytesSent += (d?.count)!
+                
+                print (Date(), "d = ", d, " numsent ", numBytesSent)
+                usleep(25000)
+            }
+        }
+    }
+    
     private func read(characteristic: CBCharacteristic) {
         self.device.peripheral.readValue(for: characteristic)
     }
