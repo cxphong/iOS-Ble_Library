@@ -9,6 +9,38 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Files View Controller-->
+        <scene sceneID="d14-8h-iDq">
+            <objects>
+                <tableViewController id="rMd-8F-LyK" customClass="FilesViewController" customModule="iOS_BLE_Library" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="Atv-Db-0Hl">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Rcz-9x-pLa">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Rcz-9x-pLa" id="XQ5-Y5-IQF">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="rMd-8F-LyK" id="KRF-Xc-fvG"/>
+                            <outlet property="delegate" destination="rMd-8F-LyK" id="qb6-G4-Y8E"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="hJa-fg-k3F"/>
+                    <connections>
+                        <segue destination="ae4-PF-fee" kind="show" identifier="write" id="zC5-Ma-rv9"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="II3-6m-92i" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1273" y="157"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="AcA-IL-RPF">
             <objects>
@@ -57,10 +89,61 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="9Av-Ou-JWu"/>
+                    <connections>
+                        <segue destination="rMd-8F-LyK" kind="show" identifier="file" id="vo9-of-UXn"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="h20-jH-nNw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="684" y="156.97151424287858"/>
+            <point key="canvasLocation" x="564" y="157"/>
+        </scene>
+        <!--Write View Controller-->
+        <scene sceneID="ifk-ml-fO7">
+            <objects>
+                <viewController id="ae4-PF-fee" customClass="WriteViewController" customModule="iOS_BLE_Library" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="wJk-IJ-APq"/>
+                        <viewControllerLayoutGuide type="bottom" id="FsP-aN-pWY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="K9T-0n-ni4">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="S3j-U5-LEG">
+                                <rect key="frame" x="30" y="91" width="291" height="111.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Device:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RIe-eB-PYG">
+                                        <rect key="frame" x="0.0" y="0.0" width="57" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="File:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XOu-IV-xhP">
+                                        <rect key="frame" x="0.0" y="36.5" width="31.5" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Progress: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T1U-a7-Rdj">
+                                        <rect key="frame" x="0.0" y="73" width="77" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" ambiguous="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Sgu-UO-PaT">
+                                        <rect key="frame" x="0.0" y="109.5" width="291" height="2"/>
+                                    </progressView>
+                                </subviews>
+                                <color key="tintColor" red="0.078431372550000003" green="0.4431372549" blue="0.5450980392" alpha="1" colorSpace="calibratedRGB"/>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pWr-tf-c5c" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2089" y="157"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="sVg-cB-ego">
@@ -73,7 +156,7 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="52z-DK-cN8" kind="relationship" relationship="rootViewController" id="cbt-zM-FD8"/>
+                        <segue destination="52z-DK-cN8" kind="relationship" relationship="rootViewController" id="Jac-vu-01D"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mZd-3t-kBT" userLabel="First Responder" sceneMemberID="firstResponder"/>

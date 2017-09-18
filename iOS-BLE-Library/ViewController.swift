@@ -15,32 +15,23 @@ class ViewController: UITableViewController {
     var listDevices : NSMutableArray!
     var data : Data!
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.startScan()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.s.stopScan()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationItem.title = "Scanning ..."
         listDevices = NSMutableArray()
         s = FioTScanManager()
-        self.perform(#selector(startScan), with: nil, afterDelay: 2 )
-        
-        let dirs = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true) as? [String]
-        
-        let file = "std1.0.0.bin"
-        if let directories = dirs {
-            let dir = directories[0]; //documents directory
-            
-            let url = URL(fileURLWithPath: dir.appending("/" + file))
-            do {
-                self.data = try Data(contentsOf: url)
-            print("data ", self.data.count)
-            } catch {
-                
-            }
-        }
-        
-//        data = Data.stringToData("123456789123456789123")
-        
     }
+
+    
 
     func startScan() {
         self.s.startScan(filterName:  nil, scanMode: .Continous)
@@ -77,32 +68,18 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.s.stopScan()
-        let d = self.listDevices.object(at: indexPath.row) as! FioTBluetoothDevice
-        
-        let c1 = FioTBluetoothCharacteristic(assignedUUID: "FF01", notify: false)
-        //let c2 = FioTBluetoothCharacteristic(assignedUUID: "0000F238-B38D-4985-720E-0F993A68EE41", notify: true)
-        let c = NSMutableArray()
-        c.add(c1)
-//        c.add(c2)
-        
-        let s = FioTBluetoothService(assignedUUID: "00FF", characteristics: c)
-        d.services.add(s)
-        
-        f = FioTManager(device: d)
-        f.delegate  = self
-        
-        do {
-            try f.connect()
-        } catch FioTManagerException.ConnectIncorrectState(let currentState) {
-            print ("Exception ConnectIncorrectState, current state = \(currentState.rawValue)")
-        } catch {
-            
-        }
-        
+    
+        self.performSegue(withIdentifier: "file", sender: self.listDevices.object(at: indexPath.row) as! FioTBluetoothDevice)
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension + 50
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let vc = segue.destination as! FilesViewController
+        vc.f = self.f
+        vc.d = sender as! FioTBluetoothDevice
     }
 }
 
@@ -117,30 +94,3 @@ extension ViewController: FioTScanManagerProtocol {
         print ("power off bl")
     }
 }
-
-extension ViewController : FioTManagerDelegate {
-    func didConnect(_ device: FioTBluetoothDevice) {
-        print ("connected")
-        
-        do {
-        try self.f.writeLarge(data: self.data,
-                                      characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
-            } catch {
-                
-            }
-//        }
-    }
-    
-    func didFailConnect(_ device: FioTBluetoothDevice) {
-        
-    }
-    
-    func didDisconnect(_ device: FioTBluetoothDevice) {
-        print ("disconnect")
-    }
-    
-    func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic: CBCharacteristic) {
-        print (String(format: "Receive = %@", (characteristic.value?.toHexString())!))
-    }
-}
-
