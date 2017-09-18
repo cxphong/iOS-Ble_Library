@@ -87,7 +87,7 @@ class FioTManager: NSObject {
                 numBytesSent += (d?.count)!
                 
                 print (Date(), "d = ", d, " numsent ", numBytesSent)
-                usleep(25000)
+                usleep(20000)
             }
         }
     }

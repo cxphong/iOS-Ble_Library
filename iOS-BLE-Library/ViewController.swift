@@ -25,20 +25,20 @@ class ViewController: UITableViewController {
         
         let dirs = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.userDomainMask, true) as? [String]
         
-//        let file = "std1.0.0.bin"
-//        if let directories = dirs {
-//            let dir = directories[0]; //documents directory
-//            
-//            let url = URL(fileURLWithPath: dir.appending("/" + file))
-//            do {
-//                self.data = try Data(contentsOf: url)
-//            print("data ", self.data.count)
-//            } catch {
-//                
-//            }
-//        }
+        let file = "std1.0.0.bin"
+        if let directories = dirs {
+            let dir = directories[0]; //documents directory
+            
+            let url = URL(fileURLWithPath: dir.appending("/" + file))
+            do {
+                self.data = try Data(contentsOf: url)
+            print("data ", self.data.count)
+            } catch {
+                
+            }
+        }
         
-        data = Data.stringToData("123456789123456789123")
+//        data = Data.stringToData("123456789123456789123")
         
     }
 
