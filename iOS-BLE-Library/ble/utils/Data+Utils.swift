@@ -19,6 +19,14 @@ extension Data {
         return [UInt8](self)
     }
     
+    func toString() -> String? {
+        if (self == nil) {
+            return nil
+        }
+        
+        return String(data: self, encoding: String.Encoding.utf8) as String!
+    }
+    
     func toHexString() -> [String] {
         let byteBuffer = toByteBuffer();
         var s = [String](repeating: "", count: byteBuffer.count)

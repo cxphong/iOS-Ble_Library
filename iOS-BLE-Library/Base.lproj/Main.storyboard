@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -109,37 +110,37 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="S3j-U5-LEG">
-                                <rect key="frame" x="30" y="91" width="291" height="111.5"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="S3j-U5-LEG">
+                                <rect key="frame" x="32" y="88" width="311" height="38.5"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Device:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RIe-eB-PYG">
-                                        <rect key="frame" x="0.0" y="0.0" width="57" height="20.5"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T1U-a7-Rdj">
+                                        <rect key="frame" x="0.0" y="0.0" width="77" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="File:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XOu-IV-xhP">
-                                        <rect key="frame" x="0.0" y="36.5" width="31.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Progress: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T1U-a7-Rdj">
-                                        <rect key="frame" x="0.0" y="73" width="77" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" ambiguous="YES" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="Sgu-UO-PaT">
-                                        <rect key="frame" x="0.0" y="109.5" width="291" height="2"/>
+                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Sgu-UO-PaT">
+                                        <rect key="frame" x="0.0" y="36.5" width="311" height="2"/>
                                     </progressView>
                                 </subviews>
                                 <color key="tintColor" red="0.078431372550000003" green="0.4431372549" blue="0.5450980392" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="Sgu-UO-PaT" firstAttribute="leading" secondItem="S3j-U5-LEG" secondAttribute="leading" id="Bix-iH-eJI"/>
+                                    <constraint firstAttribute="trailing" secondItem="Sgu-UO-PaT" secondAttribute="trailing" id="DtD-za-569"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="S3j-U5-LEG" secondAttribute="trailing" constant="16" id="15U-kW-6Rb"/>
+                            <constraint firstItem="S3j-U5-LEG" firstAttribute="leading" secondItem="K9T-0n-ni4" secondAttribute="leadingMargin" constant="16" id="YMl-3y-xg6"/>
+                            <constraint firstItem="S3j-U5-LEG" firstAttribute="top" secondItem="wJk-IJ-APq" secondAttribute="bottom" constant="24" id="h6q-dn-lSy"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="lbPRogress" destination="T1U-a7-Rdj" id="TL8-Ce-u2A"/>
+                        <outlet property="vProgress" destination="Sgu-UO-PaT" id="hya-WO-H5E"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pWr-tf-c5c" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

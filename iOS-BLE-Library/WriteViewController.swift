@@ -15,6 +15,13 @@ class WriteViewController: UIViewController {
     var data : Data!
     var d : FioTBluetoothDevice!
     
+    @IBOutlet weak var lbPRogress: UILabel!
+    @IBOutlet weak var vProgress: UIProgressView!
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.f.disconnect()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -54,7 +61,7 @@ extension WriteViewController : FioTManagerDelegate {
     func didConnect(_ device: FioTBluetoothDevice) {
         print ("connected")
         do {
-            try self.f.writeSmall(data: Data.UInt32ToData(UInt32(self.data.count), byteOder: .LittleEndian),
+            try self.f.writeSmall(data: Data.UInt32ToData(UInt32(self.data.count), byteOder: .BigEndian),
                                   characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
         } catch {
             
@@ -72,13 +79,22 @@ extension WriteViewController : FioTManagerDelegate {
     func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic: CBCharacteristic) {
         print (String(format: "Receive = %@", (characteristic.value?.toHexString())!))
         
-        if characteristic.value.str == "OK" {
+        if characteristic.value?.toString() == "ok" {
             do {
                 try self.f.writeLarge(data: self.data,
                                       characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
             } catch {
                 
             }
+        }
+    }
+    
+    func didWriteLarge(progress: Double) {
+        print ("progress \(Float(progress))")
+        
+        DispatchQueue.main.async {
+            self.lbPRogress.text = String (format: "Progress: %.1f%%", progress*100)
+            self.vProgress.setProgress(Float(progress), animated: false)
         }
     }
 }

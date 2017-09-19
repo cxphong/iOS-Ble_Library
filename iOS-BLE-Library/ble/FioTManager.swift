@@ -20,16 +20,24 @@ public protocol FioTManagerDelegate : class {
     func didFailConnect(_ device: FioTBluetoothDevice)
     func didDisconnect(_ device: FioTBluetoothDevice)
     func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic : CBCharacteristic)
+    func didWriteLarge(progress: Double)
 }
 
 class FioTManager: NSObject {
     var ble : FioTBluetoothLE!
     var device : FioTBluetoothDevice!
     var delegate : FioTManagerDelegate!
+    var enableWriteLarge : Bool = false
     
     init(device : FioTBluetoothDevice) {
         self.device = device
         self.ble = FioTBluetoothLE.shareInstance()
+    }
+    
+    func disconnect() {
+        if (self.device.peripheral.state != .disconnected) {
+            self.ble.disconnect(self.device.peripheral)
+        }
     }
     
     func connect() throws {
@@ -76,7 +84,7 @@ class FioTManager: NSObject {
         queue.async {
             var numBytesSent = 0
             
-            while (numBytesSent < data.count) {
+            while (numBytesSent < data.count && self.enableWriteLarge) {
                 let d = data.sub(in: numBytesSent...numBytesSent + 19)
                 do {
                     try self.write(data: d!, characteristicUUID: characteristicUUID, writeType: writeType)
@@ -87,6 +95,7 @@ class FioTManager: NSObject {
                 numBytesSent += (d?.count)!
                 
                 print (Date(), "d = ", d, " numsent ", numBytesSent)
+                self.delegate.didWriteLarge(progress: Double(numBytesSent)/Double(data.count))
                 usleep(20000)
             }
         }
@@ -131,6 +140,7 @@ extension FioTManager : FioTBluetoothLEDelegate {
     func didConnected(peripheral: CBPeripheral) {
         if (peripheral == device.peripheral) {
             print ("Connected")
+            self.enableWriteLarge = true
             peripheral.delegate = self
             peripheral.discoverServices(nil)
         }
@@ -139,6 +149,7 @@ extension FioTManager : FioTBluetoothLEDelegate {
     func didDisconnected(peripheral: CBPeripheral) {
         if (peripheral == device.peripheral) {
             print ("Disconnected")
+            self.enableWriteLarge = false
             self.delegate.didDisconnect(self.device)
             self.ble.delegates.remove(self)
         }

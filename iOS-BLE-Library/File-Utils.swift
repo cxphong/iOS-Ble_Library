@@ -42,7 +42,7 @@ class File_Utils: NSObject {
         return size
     }
     
-    class func sizeToHuman(size : Int) -> String {
+    class func sizeToHuman(size : Int64) -> String {
         print ("sizeToHuman \(size)")
         
         if (size < 1024) {

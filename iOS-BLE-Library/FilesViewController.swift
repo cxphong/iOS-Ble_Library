@@ -47,7 +47,7 @@ class FilesViewController: UITableViewController {
         let f = self.files.object(at: indexPath.row)
         let tmp = (f as! URL).absoluteString.components(separatedBy: "/")
         cell.textLabel?.text = tmp[tmp.count - 1]
-        cell.detailTextLabel?.text = File_Utils.sizeToHuman(size: self.sizes.object(at: indexPath.row) as! Int)
+        cell.detailTextLabel?.text = File_Utils.sizeToHuman(size: Int64(self.sizes.object(at: indexPath.row) as! Int))
         
         return cell
     }
