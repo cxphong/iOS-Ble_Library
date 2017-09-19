@@ -41,6 +41,12 @@ class FioTManager: NSObject {
         }
     }
     
+    func disconnect() {
+        if (self.device.peripheral.state != .disconnected) {
+            self.ble.disconnect(self.device.peripheral)
+        }
+    }
+    
     func write(data: Data, characteristic: CBCharacteristic, writeType: CBCharacteristicWriteType) {
         self.device.peripheral.writeValue(data, for: characteristic, type: writeType)
     }
