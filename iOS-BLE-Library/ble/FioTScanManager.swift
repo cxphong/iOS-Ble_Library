@@ -10,7 +10,7 @@ import UIKit
 import CoreBluetooth
 
 
-public protocol FioTScanManagerProtocol : class {
+public protocol FioTScanManagerDelegate : class {
     func didPowerOffBluetooth()
     func didFoundDevice(device : FioTBluetoothDevice)
 }
@@ -32,7 +32,7 @@ class FioTScanManager: NSObject {
     var state : State = .Idle
     var scanMode : ScanMode = .Continous
     var ble : FioTBluetoothLE!
-    var delegate : FioTScanManagerProtocol!
+    var delegate : FioTScanManagerDelegate!
     var ignoreExist : Bool = true
     var foundDevices : NSMutableArray!
     var filterName : String?

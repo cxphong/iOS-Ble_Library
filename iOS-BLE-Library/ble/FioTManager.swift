@@ -147,6 +147,7 @@ extension FioTManager : FioTBluetoothLEDelegate {
             print ("Disconnected")
             self.delegate.didDisconnect(self.device)
             self.ble.delegates.remove(self)
+            self.device.services.removeAllObjects()
         }
     }
     

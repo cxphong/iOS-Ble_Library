@@ -106,7 +106,7 @@ class ViewController: UITableViewController {
     }
 }
 
-extension ViewController: FioTScanManagerProtocol {
+extension ViewController: FioTScanManagerDelegate {
     func didFoundDevice(device: FioTBluetoothDevice) {
         print ("Found \(device)")
         self.listDevices.add(device)
