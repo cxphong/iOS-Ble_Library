@@ -50,6 +50,7 @@ class FioTManager: NSObject {
     }
     
     func write(data: Data, characteristic: CBCharacteristic, writeType: CBCharacteristicWriteType) {
+        print ("Write ", data.toHexString())
         self.device.peripheral.writeValue(data, for: characteristic, type: writeType)
     }
     
@@ -152,6 +153,7 @@ extension FioTManager : FioTBluetoothLEDelegate {
             self.enableWriteLarge = false
             self.delegate.didDisconnect(self.device)
             self.ble.delegates.remove(self)
+            self.device.services.removeAllObjects()
         }
     }
     
