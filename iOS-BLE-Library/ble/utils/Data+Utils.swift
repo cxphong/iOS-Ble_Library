@@ -20,10 +20,7 @@ extension Data {
     }
     
     func toString() -> String? {
-        if (self == nil) {
-            return nil
-        }
-        
+
         return String(data: self, encoding: String.Encoding.utf8) as String!
     }
     

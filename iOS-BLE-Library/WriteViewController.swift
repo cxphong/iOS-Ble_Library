@@ -61,7 +61,30 @@ extension WriteViewController : FioTManagerDelegate {
     func didConnect(_ device: FioTBluetoothDevice) {
         print ("connected")
         do {
-            try self.f.writeSmall(data: Data.UInt32ToData(UInt32(self.data.count), byteOder: .BigEndian),
+            // Header
+            let header = [UInt8](repeating: 0xff, count: 2)
+            let headerData = Data(bytes: header, count: 2)
+
+            // Key
+            let key = [UInt8](repeating: 0x00, count: 4)
+            let keyData = Data(bytes: key, count: 4)
+
+            // Size
+            let sizeData = Data.UInt32ToData(UInt32(self.data.count), byteOder: .BigEndian)
+            
+            // CRC32
+            var crc32 : UInt32 = 0
+            for byte in self.data {
+                crc32 += UInt32(byte) & 0xff;
+            }
+            
+            print ("done \(crc32)")
+            
+            let crc32Data = Data.UInt32ToData(crc32, byteOder: .BigEndian)
+            
+            let sentData = headerData.merge(other: keyData).merge(other: sizeData).merge(other: crc32Data)
+            
+            try self.f.writeSmall(data: sentData,
                                   characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
         } catch {
             
@@ -77,14 +100,28 @@ extension WriteViewController : FioTManagerDelegate {
     }
     
     func didReceiveNewData(_ device: FioTBluetoothDevice, _ characteristic: CBCharacteristic) {
-        print (String(format: "Receive = %@", (characteristic.value?.toHexString())!))
-        
-        if characteristic.value?.toString() == "ok" {
-            do {
-                try self.f.writeLarge(data: self.data,
-                                      characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
-            } catch {
-                
+        if (characteristic.value != nil) {
+            print (String(format: "Receive = %@", (characteristic.value!.toHexString())))
+            
+            if characteristic.value?.toString() == "OK" {
+                do {
+                    try self.f.writeLarge(data: self.data,
+                                          characteristicUUID: "FF01", writeType: CBCharacteristicWriteType.withResponse)
+                } catch {
+                    
+                }
+            } else if characteristic.value?.toString() == "ER" {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: "", message: "Error", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+                        alert.dismiss(animated: true, completion: { _ in })
+                        
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                    
+                    alert.addAction(ok)
+                    self.present(alert, animated: true, completion: { _ in })
+                }
             }
         }
     }
