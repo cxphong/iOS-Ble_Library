@@ -32,6 +32,10 @@ class FioTManager: NSObject {
         self.ble = FioTBluetoothLE.shareInstance()
     }
     
+    func getConnectionStatus() -> CBPeripheralState {
+        return self.device.peripheral.state;
+    }
+    
     func connect() throws {
         if (self.device.peripheral.state == .disconnected) {
             self.ble.delegates.add(self)
