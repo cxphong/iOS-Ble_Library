@@ -19,6 +19,10 @@ extension Data {
         return [UInt8](self)
     }
     
+    static func byteArrayToData(_ array : [UInt8]) -> Data {
+        return NSData(bytes: array as [UInt8], length: array.count) as Data
+    }
+    
     func toString() -> String? {
         return String(data: self, encoding: String.Encoding.utf8) as String!
     }
