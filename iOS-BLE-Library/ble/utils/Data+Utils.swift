@@ -24,7 +24,7 @@ extension Data {
     }
     
     func toString() -> String? {
-        return String(data: self, encoding: String.Encoding.utf8) as String!
+        return String(data: self, encoding: String.Encoding.utf8) as String?
     }
     
     func toHexString() -> [String] {

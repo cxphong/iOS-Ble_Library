@@ -42,7 +42,7 @@ class ViewController: UITableViewController {
         
     }
 
-    func startScan() {
+    @objc func startScan() {
         self.s.startScan(filterName:  nil, scanMode: .Continous)
         self.s.delegate = self
     }
@@ -102,7 +102,7 @@ class ViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension + 50
+        return UITableView.automaticDimension + 50
     }
 }
 
